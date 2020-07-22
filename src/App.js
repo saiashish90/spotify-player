@@ -7,7 +7,8 @@ const scopes = [
 	'user-read-currently-playing',
 	'user-read-playback-state',
 	'playlist-read-private',
-	'playlist-read-collaborative'
+	'playlist-read-collaborative',
+	'user-read-currently-playing'
 ];
 
 const hash = window.location.hash.substring(1).split('&').reduce(function(initial, item) {
@@ -17,7 +18,6 @@ const hash = window.location.hash.substring(1).split('&').reduce(function(initia
 	}
 	return initial;
 }, {});
-console.log(hash.access_token);
 window.location.hash = '';
 var Spotify = require('spotify-web-api-js');
 var s = new Spotify();
@@ -36,10 +36,20 @@ s
 			console.error(err);
 		}
 	);
+s.getMyCurrentPlayingTrack().then(
+	function(data) {
+		console.log('Current song', data);
+		document.getElementById('playing').innerHTML = data.item.name;
+	},
+	function(err) {
+		console.error(err);
+	}
+);
 
 function App() {
 	return (
 		<div>
+			<h1 id="playing">Helo </h1>
 			<a
 				className="btn btn--loginApp-link"
 				href={`${authEndpoint}client_id=${clientId}&redirect_uri=${redirectUri}&scope=${scopes.join(
