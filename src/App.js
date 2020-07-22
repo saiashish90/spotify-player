@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useState } from 'react';
 
-export const authEndpoint = 'https://accounts.spotify.com/authorize?';
+var Spotify = require('spotify-web-api-js');
+const authEndpoint = 'https://accounts.spotify.com/authorize?';
 const clientId = 'fd7a287cc4fa479490cd3ee3ccbfb96d';
 const redirectUri = 'http://localhost:3000';
 const scopes = [
@@ -19,37 +20,28 @@ const hash = window.location.hash.substring(1).split('&').reduce(function(initia
 	return initial;
 }, {});
 window.location.hash = '';
-var Spotify = require('spotify-web-api-js');
-var s = new Spotify();
-s.setAccessToken(hash.access_token);
+var spotifyAPI = new Spotify();
+spotifyAPI.setAccessToken(hash.access_token);
 
-s
-	.getUserPlaylists({
-		limit  : 5,
-		offset : 0
-	})
-	.then(
+function App() {
+	const [ playing, setPlaying ] = useState('Fetching');
+	spotifyAPI.getMyCurrentPlayingTrack().then(
 		function(data) {
-			console.log('User playlists', data);
+			console.log(data);
+			if (data) {
+				setPlaying(data.item.name);
+			} else {
+				setPlaying('No song');
+			}
 		},
 		function(err) {
 			console.error(err);
 		}
 	);
-s.getMyCurrentPlayingTrack().then(
-	function(data) {
-		console.log('Current song', data);
-		document.getElementById('playing').innerHTML = data.item.name;
-	},
-	function(err) {
-		console.error(err);
-	}
-);
 
-function App() {
 	return (
 		<div>
-			<h1 id="playing">Helo </h1>
+			<h1 id="playing">{playing} </h1>
 			<a
 				className="btn btn--loginApp-link"
 				href={`${authEndpoint}client_id=${clientId}&redirect_uri=${redirectUri}&scope=${scopes.join(
