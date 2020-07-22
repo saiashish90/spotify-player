@@ -1,30 +1,48 @@
 import React, { useState } from 'react';
+import { Client, TrackHandler, PlaylistHandler } from 'spotify-sdk';
 
 var Spotify = require('spotify-web-api-js');
-const authEndpoint = 'https://accounts.spotify.com/authorize?';
-const clientId = 'fd7a287cc4fa479490cd3ee3ccbfb96d';
-const redirectUri = 'http://localhost:3000';
-const scopes = [
-	'user-read-currently-playing',
-	'user-read-playback-state',
-	'playlist-read-private',
-	'playlist-read-collaborative',
-	'user-read-currently-playing'
-];
 
-const hash = window.location.hash.substring(1).split('&').reduce(function(initial, item) {
-	if (item) {
-		var parts = item.split('=');
-		initial[parts[0]] = decodeURIComponent(parts[1]);
+let client = Client.instance;
+
+client.settings = {
+	clientId     : 'fd7a287cc4fa479490cd3ee3ccbfb96d',
+	secretId     : 'fd7a287cc4fa479490cd3ee3ccbfb96d',
+	scopes       : [
+		'user-read-currently-playing',
+		'user-read-playback-state',
+		'playlist-read-private',
+		'playlist-read-collaborative',
+		'user-read-currently-playing'
+	],
+	redirect_uri : 'http://localhost:3000'
+};
+
+/*
+ * Login user
+ * This is a way, you can do it however you want
+ */
+function session() {
+	if (sessionStorage.token) {
+		client.token = sessionStorage.token;
+	} else if (window.location.hash.split('&')[0].split('=')[1]) {
+		sessionStorage.token = window.location.hash.split('&')[0].split('=')[1];
+		client.token = sessionStorage.token;
 	}
-	return initial;
-}, {});
-window.location.hash = '';
+}
+session();
+function login() {
+	client.login().then((url) => {
+		window.location.href = url;
+	});
+}
+
 var spotifyAPI = new Spotify();
-spotifyAPI.setAccessToken(hash.access_token);
+spotifyAPI.setAccessToken(client.token);
 
 function App() {
 	const [ playing, setPlaying ] = useState('Fetching');
+
 	spotifyAPI.getMyCurrentPlayingTrack().then(
 		function(data) {
 			console.log(data);
@@ -42,14 +60,7 @@ function App() {
 	return (
 		<div>
 			<h1 id="playing">{playing} </h1>
-			<a
-				className="btn btn--loginApp-link"
-				href={`${authEndpoint}client_id=${clientId}&redirect_uri=${redirectUri}&scope=${scopes.join(
-					'%20'
-				)}&response_type=token`}
-			>
-				Login to Spotify
-			</a>
+			<button onClick={login}>Login</button>
 		</div>
 	);
 }
