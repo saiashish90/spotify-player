@@ -11,14 +11,6 @@ function SpotifyController(props) {
 
 	spotifyAPI.setAccessToken(props.token);
 
-	function playPauseTrack() {
-		let isPlaying = playerElement.current.isPlaying;
-
-
-			isPlaying ? spotifyAPI.pause() :
-			spotifyAPI.play();
-		playerElement.current.setisPlaying(!playerElement.current.isPlaying);
-	}
 	function getSongTimer() {
 		spotifyAPI.getMyCurrentPlayingTrack().then(
 			function(data) {
@@ -42,29 +34,8 @@ function SpotifyController(props) {
 
 		setTimeout(getSongTimer, 5000);
 	}
-	function updateSong() {
-		spotifyAPI.getMyCurrentPlayingTrack().then(
-			function(data) {
-				console.log(data);
-				if (data) {
-
-						data.is_playing ? playerElement.current.setisPlaying(true) :
-						playerElement.current.setisPlaying(false);
-					playerElement.current.setplaying(data.item.name);
-
-					console.log(data.item.name);
-				} else {
-					playerElement.current.setisPlaying(false);
-					playerElement.current.setplaying('No song is playing');
-				}
-			},
-			function(err) {
-				console.error(err);
-			}
-		);
-	}
 
 	getSongTimer();
-	return <App ref={playerElement} updateSong={updateSong} />;
+	return <App ref={playerElement} />;
 }
 export default SpotifyController;
