@@ -65,14 +65,6 @@ function SpotifyController(props) {
 	}
 
 	getSongTimer();
-	return (
-		<App
-			ref={playerElement}
-			updateSong={updateSong}
-			playPauseTrack={playPauseTrack}
-			nextTrack={spotifyAPI.skipToNext}
-			previousTrack={spotifyAPI.skipToPrevious}
-		/>
-	);
+	return <App ref={playerElement} updateSong={updateSong} />;
 }
 export default SpotifyController;

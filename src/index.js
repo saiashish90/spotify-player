@@ -33,6 +33,7 @@ function session() {
 		client.token = sessionStorage.token;
 		button = <p>Logged in</p>;
 	} else if (window.location.hash.split('&')[0].split('=')[1]) {
+		console.log(window.location.hash);
 		sessionStorage.token = window.location.hash.split('&')[0].split('=')[1];
 		client.token = sessionStorage.token;
 		button = <p>Logged in</p>;
