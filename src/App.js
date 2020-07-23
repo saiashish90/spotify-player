@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 
 var Spotify = require('spotify-web-api-js');
 
