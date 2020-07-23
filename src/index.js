@@ -15,7 +15,8 @@ client.settings = {
 		'user-read-playback-state',
 		'playlist-read-private',
 		'playlist-read-collaborative',
-		'user-read-currently-playing'
+		'user-read-currently-playing',
+		'user-modify-playback-state'
 	],
 	redirect_uri : 'http://localhost:3000'
 };
