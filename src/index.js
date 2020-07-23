@@ -4,6 +4,7 @@ import { Client } from 'spotify-sdk';
 
 import './index.css';
 import SpotifyController from './Spotify';
+import Webplayer from './Webplayer';
 
 let client = Client.instance;
 
@@ -11,6 +12,7 @@ client.settings = {
 	clientId     : 'fd7a287cc4fa479490cd3ee3ccbfb96d',
 	secretId     : 'fd7a287cc4fa479490cd3ee3ccbfb96d',
 	scopes       : [
+		'streaming',
 		'user-read-currently-playing',
 		'user-read-playback-state',
 		'playlist-read-private',
@@ -44,6 +46,7 @@ function login() {
 }
 ReactDOM.render(
 	<React.StrictMode>
+		<Webplayer />
 		<SpotifyController token={client.token} />
 		{button}
 	</React.StrictMode>,

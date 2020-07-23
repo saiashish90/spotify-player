@@ -17,6 +17,7 @@ function SpotifyController(props) {
 
 			isPlaying ? spotifyAPI.pause() :
 			spotifyAPI.play();
+		playerElement.current.setisPlaying(!playerElement.current.isPlaying);
 	}
 	function getSongTimer() {
 		spotifyAPI.getMyCurrentPlayingTrack().then(
