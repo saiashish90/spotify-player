@@ -15,8 +15,10 @@ const App = forwardRef((props, ref) => {
 	});
 	return (
 		<div>
-			<h1>{playing}</h1>
+			<h4>{playing}</h4>
+			<button onClick={props.previousTrack}>Prev</button>
 			{button}
+			<button onClick={props.nextTrack}>Next</button>
 		</div>
 	);
 });

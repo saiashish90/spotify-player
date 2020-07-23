@@ -10,13 +10,15 @@ function SpotifyController(props) {
 	let playerElement = React.createRef();
 
 	spotifyAPI.setAccessToken(props.token);
+
 	function playPauseTrack() {
 		let isPlaying = playerElement.current.isPlaying;
+
 
 			isPlaying ? spotifyAPI.pause() :
 			spotifyAPI.play();
 	}
-	function getSong() {
+	function getSongTimer() {
 		spotifyAPI.getMyCurrentPlayingTrack().then(
 			function(data) {
 				console.log(data);
@@ -37,10 +39,39 @@ function SpotifyController(props) {
 			}
 		);
 
-		setTimeout(getSong, 5000);
+		setTimeout(getSongTimer, 5000);
+	}
+	function updateSong() {
+		spotifyAPI.getMyCurrentPlayingTrack().then(
+			function(data) {
+				console.log(data);
+				if (data) {
+
+						data.is_playing ? playerElement.current.setisPlaying(true) :
+						playerElement.current.setisPlaying(false);
+					playerElement.current.setplaying(data.item.name);
+
+					console.log(data.item.name);
+				} else {
+					playerElement.current.setisPlaying(false);
+					playerElement.current.setplaying('No song is playing');
+				}
+			},
+			function(err) {
+				console.error(err);
+			}
+		);
 	}
 
-	getSong();
-	return <App ref={playerElement} playPauseTrack={playPauseTrack} />;
+	getSongTimer();
+	return (
+		<App
+			ref={playerElement}
+			updateSong={updateSong}
+			playPauseTrack={playPauseTrack}
+			nextTrack={spotifyAPI.skipToNext}
+			previousTrack={spotifyAPI.skipToPrevious}
+		/>
+	);
 }
 export default SpotifyController;
