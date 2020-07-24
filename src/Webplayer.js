@@ -1,6 +1,15 @@
 import React from 'react';
+import App from './App';
+function Webplayer(props) {
+	let playerElement = React.createRef();
+	props.user.me().then((userEntity) => {
+		console.log(userEntity);
+		props.user.playlists(userEntity._id).then((playlistCollection) => {
+			console.log('playlist api request');
+			playerElement.current.setplaylist(playlistCollection);
+		});
+	});
 
-function Webplayer() {
 	window.onSpotifyWebPlaybackSDKReady = () => {
 		var player = new window.Spotify.Player({
 			name          : 'Laptop',
@@ -53,8 +62,10 @@ function Webplayer() {
 		document.querySelector('#playPause').onclick = playPause;
 		document.querySelector('#nextTrack').onclick = nextTrack;
 	};
+
 	return (
 		<div>
+			<App ref={playerElement} />
 			<h3 id="track">NO SONG</h3>
 			<button id="prevTrack">Prev</button>
 			<button id="playPause">Play/Pause</button>

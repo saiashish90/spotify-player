@@ -1,19 +1,28 @@
 import React, { useState, useImperativeHandle, forwardRef } from 'react';
 
 const App = forwardRef((props, ref) => {
-	const [ playing, setplaying ] = useState('No song is playing');
-	const [ isPlaying, setisPlaying ] = useState(false);
-
+	const [ playlist, setplaylist ] = useState({});
 	useImperativeHandle(ref, () => {
 		return {
-			setplaying   : setplaying,
-			setisPlaying : setisPlaying,
-			isPlaying    : isPlaying
+			setplaylist : setplaylist
 		};
 	});
+	let playlists = [];
+	for (let i = 0; i < playlist.length; i++) {
+		let item = {
+			name     : playlist[i]._name,
+			href     : playlist[i]._href,
+			id       : playlist[i]._id,
+			uri      : playlist[i]._uri,
+			albumArt : playlist[i]._images[0]
+		};
+		playlists.push(item);
+	}
+	console.log(playlists);
+
 	return (
 		<div>
-			<h4>{playing}</h4>
+			<h4>helo</h4>
 		</div>
 	);
 });

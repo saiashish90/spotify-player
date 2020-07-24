@@ -1,9 +1,8 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { Client } from 'spotify-sdk';
+import { Client, UserHandler } from 'spotify-sdk';
 
 import './index.css';
-import SpotifyController from './Spotify';
 import Webplayer from './Webplayer';
 
 let client = Client.instance;
@@ -45,10 +44,12 @@ function login() {
 		window.location.href = url;
 	});
 }
+
+var user = new UserHandler();
+
 ReactDOM.render(
 	<React.StrictMode>
-		<Webplayer />
-		<SpotifyController token={client.token} />
+		<Webplayer user={user} />
 		{button}
 	</React.StrictMode>,
 	document.getElementById('root')
