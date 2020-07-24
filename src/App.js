@@ -1,15 +1,12 @@
 import React, { useState, useImperativeHandle, forwardRef } from 'react';
-var SpotifyWebApi = require('spotify-web-api-js');
-var spotifyApi = new SpotifyWebApi();
-spotifyApi.setAccessToken(sessionStorage.token);
 
 const App = forwardRef((props, ref) => {
 	const [ playlist, setplaylist ] = useState({});
 	const [ deviceID, setDeviceID ] = useState(0);
 
 	function playURI(linkToSong) {
-		spotifyApi.setAccessToken(sessionStorage.token);
-		spotifyApi.play({
+		props.spotifyApi.setAccessToken(sessionStorage.token);
+		props.spotifyApi.play({
 			device_id   : deviceID,
 			context_uri : linkToSong,
 			offset      : {
@@ -19,8 +16,8 @@ const App = forwardRef((props, ref) => {
 		});
 	}
 	function shuffle(state) {
-		spotifyApi.setAccessToken(sessionStorage.token);
-		spotifyApi.setShuffle(!state);
+		props.spotifyApi.setAccessToken(sessionStorage.token);
+		props.spotifyApi.setShuffle(!state);
 	}
 
 	useImperativeHandle(ref, () => {
@@ -38,10 +35,10 @@ const App = forwardRef((props, ref) => {
 		// uri      : playlist[i]._uri,
 		// albumArt : playlist[i]._images[0]
 		renderItems.push(
-			<div key={playlist[i]._id}>
-				<h5>{playlist[i]._name}</h5>
-				<button onClick={() => playURI(playlist[i]._uri)}>Play</button>
-				<img src={playlist[i]._images[0].url} alt="albumart" width="50" />
+			<div key={playlist[i].id}>
+				<h5>{playlist[i].name}</h5>
+				<button onClick={() => playURI(playlist[i].uri)}>Play</button>
+				<img src={playlist[i].images[0].url} alt="albumart" width="50" />
 			</div>
 		);
 	}

@@ -1,18 +1,24 @@
 import React from 'react';
 import App from './App';
 
+var SpotifyWebApi = require('spotify-web-api-js');
+var spotifyApi = new SpotifyWebApi();
+
 function Webplayer(props) {
 	let playerElement = React.createRef();
 	let shuffleState = false;
 	let volume = 1;
 
-	props.user.me().then((userEntity) => {
-		console.log(userEntity);
-		props.user.playlists(userEntity._id).then((playlistCollection) => {
-			console.log('playlist api request');
-			playerElement.current.setplaylist(playlistCollection);
-		});
-	});
+	spotifyApi.setAccessToken(sessionStorage.token);
+	spotifyApi.getUserPlaylists().then(
+		function(data) {
+			console.log(data.items);
+			playerElement.current.setplaylist(data.items);
+		},
+		function(err) {
+			console.error(err);
+		}
+	);
 	window.onSpotifyWebPlaybackSDKReady = () => {
 		var player = new window.Spotify.Player({
 			name          : 'Laptop',
@@ -77,7 +83,7 @@ function Webplayer(props) {
 
 	return (
 		<div>
-			<App ref={playerElement} />
+			<App ref={playerElement} spotifyApi={spotifyApi} />
 			<h3 id="track">NO SONG</h3>
 			<button id="prevTrack">Prev</button>
 			<button id="playPause">Play/Pause</button>
