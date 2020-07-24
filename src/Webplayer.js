@@ -1,5 +1,9 @@
 import React from 'react';
 import App from './App';
+var SpotifyWebApi = require('spotify-web-api-js');
+var spotifyApi = new SpotifyWebApi();
+spotifyApi.setAccessToken(sessionStorage.token);
+
 function Webplayer(props) {
 	let playerElement = React.createRef();
 	props.user.me().then((userEntity) => {
@@ -9,33 +13,40 @@ function Webplayer(props) {
 			playerElement.current.setplaylist(playlistCollection);
 		});
 	});
-
 	window.onSpotifyWebPlaybackSDKReady = () => {
 		var player = new window.Spotify.Player({
 			name          : 'Laptop',
 			getOAuthToken : (callback) => {
 				callback(sessionStorage.token);
 			},
-			volume        : 0.5
+			volume        : 1
 		});
+
+		// COnnect and print device id
 		player.connect().then((success) => {
 			if (success) {
 				console.log('The Web Playback SDK successfully connected to Spotify!');
 			}
 		});
+		player.addListener('ready', ({ device_id }) => {
+			console.log('Connected with Device ID', device_id);
+		});
 
+		// Listen to change in songs
+		try {
+			player.addListener('player_state_changed', ({ position, duration, track_window: { current_track } }) => {
+				document.getElementById('track').innerHTML = current_track.name;
+				console.log('Position in Song', position);
+				console.log('Duration of Song', duration);
+			});
+		} catch (e) {
+			console.log('cant get nme');
+		}
+
+		// Change track functions
 		function prevTrack() {
 			player.previousTrack().then(() => {
 				console.log('Set to previous track!');
-			});
-			player.getCurrentState().then((state) => {
-				if (!state) {
-					console.error('User is not playing music through the Web Playback SDK');
-					return;
-				}
-				let previous_track = state.track_window.previous_tracks[1].name;
-				console.log('Playing Next', previous_track);
-				document.getElementById('track').innerHTML = previous_track;
 			});
 		}
 		function playPause() {
@@ -47,20 +58,23 @@ function Webplayer(props) {
 			player.nextTrack().then(() => {
 				console.log('Skipped to next track!');
 			});
-			player.getCurrentState().then((state) => {
-				if (!state) {
-					console.error('User is not playing music through the Web Playback SDK');
-					return;
-				}
+		}
 
-				let next_track = state.track_window.next_tracks[0].name;
-				console.log('Playing Next', next_track);
-				document.getElementById('track').innerHTML = next_track;
+		function playURI(linkToSong) {
+			spotifyApi.transferMyPlayback([ '43947e023a721d4e1cebe2578df782cd4d8d5301' ]);
+			spotifyApi.play({
+				context_uri : linkToSong,
+				offset      : {
+					position : 5
+				},
+				position_ms : 0
 			});
 		}
+
 		document.querySelector('#prevTrack').onclick = prevTrack;
 		document.querySelector('#playPause').onclick = playPause;
 		document.querySelector('#nextTrack').onclick = nextTrack;
+		document.querySelector('#playTrack').onclick = () => playURI('spotify:playlist:6dkVKLZ20LN3zfaxRv7Efx');
 	};
 
 	return (
@@ -70,6 +84,7 @@ function Webplayer(props) {
 			<button id="prevTrack">Prev</button>
 			<button id="playPause">Play/Pause</button>
 			<button id="nextTrack">Next</button>
+			<button id="playTrack">URI</button>
 		</div>
 	);
 }
