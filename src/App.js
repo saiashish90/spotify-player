@@ -8,6 +8,7 @@ const App = forwardRef((props, ref) => {
 		};
 	});
 	let playlists = [];
+	let renderItems = [];
 	for (let i = 0; i < playlist.length; i++) {
 		let item = {
 			name     : playlist[i]._name,
@@ -16,15 +17,16 @@ const App = forwardRef((props, ref) => {
 			uri      : playlist[i]._uri,
 			albumArt : playlist[i]._images[0]
 		};
+		renderItems.push(
+			<div key={playlist[i]._id}>
+				<h5>{playlist[i]._name}</h5>
+				<button>Play</button>
+				<img src={playlist[i]._images[0].url} alt="albumart" width="100" />
+			</div>
+		);
 		playlists.push(item);
 	}
-	console.log(playlists);
-
-	return (
-		<div>
-			<h4>helo</h4>
-		</div>
-	);
+	return <div>{renderItems}</div>;
 });
 
 export default App;
