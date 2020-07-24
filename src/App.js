@@ -8,6 +8,7 @@ const App = forwardRef((props, ref) => {
 	const [ deviceID, setDeviceID ] = useState(0);
 
 	function playURI(linkToSong) {
+		spotifyApi.setAccessToken(sessionStorage.token);
 		spotifyApi.play({
 			device_id   : deviceID,
 			context_uri : linkToSong,
@@ -18,6 +19,7 @@ const App = forwardRef((props, ref) => {
 		});
 	}
 	function shuffle(state) {
+		spotifyApi.setAccessToken(sessionStorage.token);
 		spotifyApi.setShuffle(!state);
 	}
 
