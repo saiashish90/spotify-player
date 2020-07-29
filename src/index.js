@@ -1,7 +1,5 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { Client, UserHandler } from 'spotify-sdk';
-
 import './index.css';
 import Webplayer from './Webplayer';
 
@@ -17,8 +15,6 @@ const scopes = [
 
 const clientId = 'fd7a287cc4fa479490cd3ee3ccbfb96d';
 const redirectUri = 'http://localhost:3000';
-
-let client = Client.instance;
 
 let button = (
 	<button id="login" onClick={login}>
@@ -43,11 +39,9 @@ function login() {
 	window.location.href = url;
 }
 
-var user = new UserHandler();
-
 ReactDOM.render(
 	<React.StrictMode>
-		<Webplayer user={user} />
+		<Webplayer />
 		{button}
 	</React.StrictMode>,
 	document.getElementById('root')
